@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Firewall Lab</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="login-page">
+
+<div class="login-wrapper">
+
+    <div class="login-card">
+
+        <div class="login-logo">🛡</div>
+
+        <span class="small-label">ADMINISTRATION</span>
+
+        <h1>Admin Login</h1>
+
+        <p>Sign in to access the Firewall Lab security dashboard.</p>
+
+
+        {% with messages = get_flashed_messages() %}
+
+            {% if messages %}
+
+                <div class="flash-message">
+
+                    {% for message in messages %}
+
+                        <p>{{ message }}</p>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <form method="POST" class="login-form">
+
+            <label for="username">Username</label>
+
+            <input
+                type="text"
+                id="username"
+                name="username"
+                placeholder="Enter username"
+                required
+            >
+
+            <label for="password">Password</label>
+
+            <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Enter password"
+                required
+            >
+
+            <button type="submit" class="login-button">
+                Login to Dashboard
+            </button>
+
+        </form>
+
+
+        <div class="demo-credentials">
+
+            <strong>Demo Credentials</strong>
+
+            <p>Username: <b>admin</b></p>
+
+            <p>Password: <b>admin123</b></p>
+
+        </div>
+
+
+        <a href="{{ url_for('home') }}" class="back-link">
+            ← Back to Firewall Lab
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

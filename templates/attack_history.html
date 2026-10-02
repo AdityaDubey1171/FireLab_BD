@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Attack History</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="topbar">
+<a class="back" href="{{ url_for('admin_dashboard') }}">
+← Back to Admin Panel
+</a>
+</div>
+
+<div class="admin-header">
+<span class="small-label">SECURITY EVENTS</span>
+<h1>🛡 Attack History</h1>
+<p>All simulated security events recorded by the firewall lab.</p>
+</div>
+
+<div class="table-container">
+
+<table>
+
+<thead>
+<tr>
+<th>ID</th>
+<th>Attack</th>
+<th>Source</th>
+<th>Target</th>
+<th>Severity</th>
+<th>Status</th>
+<th>Time</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for attack in attacks %}
+
+<tr>
+
+<td>{{ attack.id }}</td>
+
+<td>{{ attack.attack_type }}</td>
+
+<td>{{ attack.source_ip }}</td>
+
+<td>{{ attack.target }}</td>
+
+<td>
+<span class="table-severity {{ attack.severity|lower }}">{{ attack.severity }}</span>
+</td>
+
+<td class="{% if attack.status == 'BLOCKED' %}blocked{% else %}allowed{% endif %}">
+{{ attack.status }}
+</td>
+
+<td>{{ attack.timestamp }}</td>
+
+</tr>
+
+{% else %}
+
+<tr>
+<td colspan="7">No security events recorded yet.</td>
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</body>
+</html>

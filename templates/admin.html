@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Admin Dashboard - Firewall Lab
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+<body>
+
+<header class="navbar">
+
+    <div class="logo">
+
+        <div class="logo-icon">
+            🛡
+        </div>
+
+        <div>
+
+            <h2>
+                Firewall Lab
+            </h2>
+
+            <span>
+                Admin Dashboard
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="admin-nav">
+
+        <a
+            href="{{ url_for('home') }}"
+            class="nav-button"
+        >
+            Public Lab
+        </a>
+
+        <a
+            href="{{ url_for('logout') }}"
+            class="logout-button"
+        >
+            Logout
+        </a>
+
+    </div>
+
+</header>
+
+
+<main class="admin-container">
+
+    <section class="admin-header">
+
+        <div>
+
+            <span class="small-label">
+                SECURITY OPERATIONS
+            </span>
+
+            <h1>
+                Admin Dashboard
+            </h1>
+
+            <p>
+                Monitor simulated attacks and authentication activity.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- STATISTICS -->
+
+    <section class="stats-grid">
+
+        <div class="stat-card">
+
+            <span>
+                TOTAL ATTACKS
+            </span>
+
+            <strong>
+                {{ total }}
+            </strong>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <span>
+                BLOCKED
+            </span>
+
+            <strong>
+                {{ blocked }}
+            </strong>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <span>
+                HIGH SEVERITY
+            </span>
+
+            <strong>
+                {{ high }}
+            </strong>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <span>
+                CRITICAL
+            </span>
+
+            <strong>
+                {{ critical }}
+            </strong>
+
+        </div>
+
+    </section>
+
+
+    <!-- ACTIONS -->
+
+    <section class="admin-actions">
+
+        <a
+            href="{{ url_for('attack_history') }}"
+            class="dashboard-action"
+        >
+
+            <span class="action-icon">
+                ⚠
+            </span>
+
+            <div>
+
+                <h3>
+                    Attack History
+                </h3>
+
+                <p>
+                    View all simulated security events.
+                </p>
+
+            </div>
+
+            <span>
+                →
+            </span>
+
+        </a>
+
+
+        <a
+            href="{{ url_for('login_history') }}"
+            class="dashboard-action"
+        >
+
+            <span class="action-icon">
+                🔐
+            </span>
+
+            <div>
+
+                <h3>
+                    Login History
+                </h3>
+
+                <p>
+                    Review administrator login attempts.
+                </p>
+
+            </div>
+
+            <span>
+                →
+            </span>
+
+        </a>
+
+    </section>
+
+
+    <!-- RECENT ATTACKS -->
+
+    <section class="recent-section">
+
+        <div class="section-title">
+
+            <div>
+
+                <span class="small-label">
+                    DATABASE
+                </span>
+
+                <h2>
+                    Recent Security Events
+                </h2>
+
+            </div>
+
+            <a
+                href="{{ url_for('attack_history') }}"
+                class="text-link"
+            >
+                View All →
+            </a>
+
+        </div>
+
+
+        {% if recent_attacks %}
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            ID
+                        </th>
+
+                        <th>
+                            Attack
+                        </th>
+
+                        <th>
+                            Source
+                        </th>
+
+                        <th>
+                            Severity
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            Time
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for attack in recent_attacks %}
+
+                    <tr>
+
+                        <td>
+                            #{{ attack.id }}
+                        </td>
+
+                        <td>
+                            {{ attack.attack_type }}
+                        </td>
+
+                        <td>
+                            {{ attack.source_ip }}
+                        </td>
+
+                        <td>
+                            <span
+                                class="table-severity
+                                {{ attack.severity|lower }}"
+                            >
+                                {{ attack.severity }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="status-blocked">
+                                {{ attack.status }}
+                            </span>
+                        </td>
+
+                        <td>
+                            {{ attack.timestamp }}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="empty-state">
+
+            <p>
+                No attack simulations have been recorded yet.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </section>
+
+</main>
+
+
+<footer>
+
+    <p>
+        Firewall Lab Admin Panel
+    </p>
+
+</footer>
+
+</body>
+
+</html>

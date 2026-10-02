@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login History - Firewall Lab</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<header class="navbar">
+
+    <div class="logo">
+        <div class="logo-icon">🛡</div>
+        <div>
+            <h2>Firewall Lab</h2>
+            <span>Login History</span>
+        </div>
+    </div>
+
+    <div class="admin-nav">
+        <a href="{{ url_for('admin_dashboard') }}" class="nav-button">← Dashboard</a>
+        <a href="{{ url_for('logout') }}" class="logout-button">Logout</a>
+    </div>
+
+</header>
+
+
+<main class="admin-container">
+
+    <section class="admin-header">
+
+        <span class="small-label">AUTHENTICATION MONITORING</span>
+
+        <h1>Login History</h1>
+
+        <p>
+            Review all successful and failed administrator
+            login attempts recorded by the system.
+        </p>
+
+    </section>
+
+
+    {% if attempts %}
+
+    <div class="table-container">
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>IP Address</th>
+                    <th>Status</th>
+                    <th>Timestamp</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for attempt in attempts %}
+
+                <tr>
+
+                    <td>#{{ attempt.id }}</td>
+
+                    <td>{{ attempt.username }}</td>
+
+                    <td>{{ attempt.ip_address }}</td>
+
+                    <td>
+
+                        {% if attempt.status == "SUCCESS" %}
+
+                        <span class="status-success">SUCCESS</span>
+
+                        {% else %}
+
+                        <span class="status-failed">FAILED</span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>{{ attempt.timestamp }}</td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    {% else %}
+
+    <div class="empty-state">
+
+        <h3>No Login History</h3>
+
+        <p>
+            No administrator login attempts have
+            been recorded yet.
+        </p>
+
+    </div>
+
+    {% endif %}
+
+</main>
+
+
+<footer>
+    <p>Firewall Lab — Authentication Monitoring</p>
+</footer>
+
+</body>
+
+</html>

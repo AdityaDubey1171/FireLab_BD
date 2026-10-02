@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Firewall Security Laboratory</title>
+
+<style>
+:root{
+    --bg:#f6f7fb;
+    --surface:#ffffff;
+    --border:#e3e6ef;
+    --border-strong:#c9cfe0;
+    --text:#1b1f33;
+    --muted:#5b627a;
+    --primary:#4f46e5;
+    --primary-dark:#4338ca;
+    --primary-soft:#eef0ff;
+    --red:#dc2626;
+    --red-soft:#fef2f2;
+    --green:#16a34a;
+    --green-soft:#f0fdf4;
+    --amber:#d97706;
+    --amber-soft:#fffbeb;
+    --orange:#ea580c;
+    --radius:14px;
+    --shadow-sm:0 1px 2px rgba(27,31,51,.05);
+    --shadow-md:0 6px 18px rgba(27,31,51,.08);
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+
+body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+}
+
+a{color:var(--primary);text-decoration:none}
+a:hover{color:var(--primary-dark)}
+
+h1,h2,h3,h4{margin:0;line-height:1.25;color:var(--text)}
+p{margin:0;color:var(--muted)}
+
+:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+
+.container{width:92%;max-width:1160px;margin:0 auto}
+
+/* ---------- Top navigation ---------- */
+.nav{
+    position:sticky;top:0;z-index:50;
+    background:rgba(255,255,255,.92);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--border);
+}
+.nav-inner{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:16px;min-height:60px;
+}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--text)}
+.brand-mark{
+    width:32px;height:32px;border-radius:9px;
+    background:var(--primary);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+}
+.nav-links{display:flex;align-items:center;gap:6px}
+.nav-links a.link{
+    padding:8px 12px;border-radius:8px;
+    color:var(--muted);font-size:14px;font-weight:500;
+    transition:background .15s,color .15s;
+}
+.nav-links a.link:hover{background:var(--primary-soft);color:var(--primary)}
+.admin{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:6px 12px;border-radius:999px;
+    background:var(--primary-soft);color:var(--primary-dark);
+    font-size:13px;font-weight:600;
+}
+.menu-btn{
+    display:none;width:40px;height:40px;margin:0;padding:0;
+    border:1px solid var(--border);border-radius:10px;
+    background:var(--surface);color:var(--text);cursor:pointer;
+    align-items:center;justify-content:center;
+}
+.menu-btn:hover{background:var(--primary-soft)}
+
+/* ---------- Hero ---------- */
+.hero{padding:44px 0 12px}
+.back{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:14px;font-weight:600;margin-bottom:22px;
+}
+.back svg{transition:transform .15s}
+.back:hover svg{transform:translateX(-3px)}
+.pill{
+    display:inline-block;padding:4px 12px;border-radius:999px;
+    background:var(--primary-soft);color:var(--primary-dark);
+    font-size:13px;font-weight:600;
+}
+.hero h1{font-size:clamp(28px,4.5vw,42px);margin:14px 0 12px;letter-spacing:-.02em}
+.hero p{max-width:640px;font-size:17px}
+.hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+
+/* ---------- Buttons ---------- */
+.btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:11px 18px;margin:0;
+    border-radius:10px;border:1px solid transparent;
+    font:inherit;font-size:15px;font-weight:600;
+    cursor:pointer;
+    transition:background .15s,border-color .15s,color .15s,box-shadow .15s;
+}
+.btn svg{transition:transform .15s}
+.btn:hover svg{transform:translateX(2px)}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-dark);color:#fff;box-shadow:0 4px 12px rgba(79,70,229,.25)}
+.btn-ghost{background:var(--surface);color:var(--text);border-color:var(--border-strong)}
+.btn-ghost:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-soft)}
+.btn-sm{padding:8px 14px;font-size:14px}
+
+/* ---------- Sections ---------- */
+.section{padding:40px 0 8px}
+.section-head{margin-bottom:22px;max-width:680px}
+.section-head h2{font-size:24px;letter-spacing:-.01em;margin-bottom:6px}
+
+/* ---------- Cards (shared) ---------- */
+.card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow-sm);
+    transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
+}
+.card:hover{
+    transform:translateY(-2px);
+    box-shadow:var(--shadow-md);
+    border-color:var(--border-strong);
+}
+.card.open{border-color:var(--primary);box-shadow:var(--shadow-md)}
+
+.icon{
+    width:40px;height:40px;flex:none;
+    border-radius:11px;
+    background:var(--primary-soft);color:var(--primary);
+    display:flex;align-items:center;justify-content:center;
+    font-size:19px;
+    transition:transform .18s ease,background .18s ease,color .18s ease;
+}
+.card:hover .icon{transform:scale(1.08) rotate(-3deg)}
+.card.open .icon{background:var(--primary);color:#fff}
+
+/* Expand / collapse */
+.toggle{
+    display:flex;align-items:flex-start;gap:14px;
+    width:100%;margin:0;padding:20px;
+    background:none;border:0;border-radius:var(--radius);
+    color:inherit;font:inherit;text-align:left;cursor:pointer;
+}
+.toggle-text{flex:1;min-width:0}
+.toggle-text h3{font-size:16px;margin-bottom:3px}
+.toggle-text p{font-size:14px}
+.chev{
+    flex:none;margin-top:2px;color:var(--muted);
+    transition:transform .25s ease,color .15s;
+}
+.card:hover .chev{color:var(--primary)}
+.card.open .chev{transform:rotate(180deg);color:var(--primary)}
+
+.panel{
+    display:grid;grid-template-rows:0fr;
+    transition:grid-template-rows .28s ease;
+}
+.card.open .panel{grid-template-rows:1fr}
+.panel-clip{overflow:hidden;min-height:0}
+.panel-body{
+    padding:0 20px 20px;
+    border-top:1px solid var(--border);
+    margin:0 20px;padding:16px 0 4px;
+    display:grid;gap:14px;
+}
+.card.open .panel-body{margin-bottom:20px}
+.detail h4{font-size:13px;color:var(--primary-dark);margin-bottom:3px}
+.detail p{font-size:14px}
+
+/* ---------- Grids ---------- */
+.grid{display:grid;gap:16px;align-items:start}
+.grid-2{grid-template-columns:repeat(2,1fr)}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+
+/* ---------- Isolation diagram ---------- */
+.boundary{
+    display:grid;grid-template-columns:1fr auto 1fr auto 1fr;
+    align-items:center;gap:14px;
+    padding:24px;margin-top:20px;
+}
+.boundary-box{text-align:center;padding:10px}
+.boundary-box .icon{margin:0 auto 10px;width:48px;height:48px;font-size:22px}
+.boundary-box strong{display:block;font-size:15px}
+.boundary-box span{font-size:13px;color:var(--muted)}
+.boundary-arrow{color:var(--primary);font-size:22px}
+.boundary-box.fw .icon{background:var(--primary);color:#fff}
+
+/* ---------- Pipeline ---------- */
+.pipeline-wrap{padding:22px}
+.steps{
+    display:grid;grid-template-columns:repeat(3,1fr);
+    gap:14px;align-items:start;
+}
+.step{position:relative}
+.step .toggle{padding:16px}
+.step-num{
+    flex:none;width:28px;height:28px;border-radius:50%;
+    background:var(--primary-soft);color:var(--primary-dark);
+    font-size:13px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;
+    transition:transform .18s,background .18s,color .18s;
+}
+.step:hover .step-num{transform:scale(1.1)}
+.step.open .step-num{background:var(--primary);color:#fff}
+.step .panel-body{margin:0 16px}
+.step.open .panel-body{margin-bottom:16px}
+
+/* Result state on the pipeline */
+.steps.has-result .step .step-num{background:var(--primary);color:#fff}
+.steps.blocked .step.final{border-color:var(--red)}
+.steps.blocked .step.final .step-num{background:var(--red)}
+.steps.allowed .step.final{border-color:var(--green)}
+.steps.allowed .step.final .step-num{background:var(--green)}
+
+/* ---------- Attack cards ---------- */
+.attack{display:flex;flex-direction:column}
+.attack-top{display:flex;gap:14px;align-items:flex-start;padding:20px 20px 0}
+.attack-top h3{font-size:16px;margin-bottom:3px}
+.attack-top p{font-size:14px}
+.attack-meta{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:10px;flex-wrap:wrap;padding:14px 20px;
+}
+.status{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:13px;font-weight:600;
+}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--green)}
+.status.off .dot{background:var(--amber)}
+.attack-actions{display:flex;gap:8px;flex-wrap:wrap}
+.more{
+    display:flex;align-items:center;justify-content:space-between;
+    width:100%;margin:0;padding:12px 20px;
+    background:none;border:0;border-top:1px solid var(--border);
+    border-radius:0 0 var(--radius) var(--radius);
+    color:var(--muted);font:inherit;font-size:14px;font-weight:600;cursor:pointer;
+    transition:color .15s,background .15s;
+}
+.more:hover{color:var(--primary);background:var(--primary-soft)}
+.more .chev{margin:0}
+.attack.open .more .chev{transform:rotate(180deg)}
+.attack .panel-body{margin:0;padding:16px 20px 4px;border-top:1px solid var(--border)}
+.attack.open .panel-body{margin-bottom:0;padding-bottom:20px}
+
+/* ---------- Rule cards ---------- */
+.rule-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px}
+.tag{
+    display:inline-block;padding:2px 10px;border-radius:999px;
+    font-size:12px;font-weight:600;
+    background:#f1f3f9;color:var(--muted);
+}
+.tag.critical{background:var(--red-soft);color:var(--red)}
+.tag.high{background:#fff3ea;color:var(--orange)}
+.tag.medium{background:var(--amber-soft);color:var(--amber)}
+.tag.low{background:var(--green-soft);color:var(--green)}
+.tag.action{background:var(--red-soft);color:var(--red)}
+
+/* ---------- Simulator ---------- */
+.sim{padding:28px}
+.sim-head{display:flex;gap:14px;align-items:flex-start;margin-bottom:6px}
+.sim-head h2{font-size:22px;margin-bottom:4px}
+.sim label{display:block;margin:20px 0 8px;font-weight:600;font-size:14px}
+.sim input{
+    width:100%;padding:13px 14px;
+    border:1px solid var(--border-strong);border-radius:10px;
+    background:#fff;color:var(--text);
+    font:inherit;font-size:16px;
+    transition:border-color .15s,box-shadow .15s;
+}
+.sim input:hover{border-color:var(--primary)}
+.sim input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(79,70,229,.15)}
+.sim button[type=submit]{width:100%;margin-top:16px;padding:14px}
+.hint{font-size:13px;margin-top:8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chip{
+    padding:6px 12px;margin:0;border-radius:999px;
+    border:1px solid var(--border-strong);background:#fff;
+    color:var(--muted);font:inherit;font-size:13px;font-weight:500;cursor:pointer;
+    transition:border-color .15s,color .15s,background .15s;
+}
+.chip:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-soft)}
+
+/* ---------- Result ---------- */
+.result{margin-top:24px;padding:22px;border-radius:var(--radius);border:1px solid}
+.result-blocked{background:var(--red-soft);border-color:#fecaca}
+.result-allowed{background:var(--green-soft);border-color:#bbf7d0}
+.result-title{font-size:22px;font-weight:700;margin-bottom:6px}
+.red{color:var(--red)}
+.green{color:var(--green)}
+.yellow{color:var(--amber)}
+.result-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);
+    gap:12px;margin-top:18px;
+}
+.result-item{
+    background:#fff;border:1px solid var(--border);
+    border-radius:10px;padding:12px 14px;
+    transition:border-color .15s;
+}
+.result-item:hover{border-color:var(--border-strong)}
+.result-item b{display:block;color:var(--muted);font-size:12px;font-weight:600;margin-bottom:4px}
+
+/* ---------- Notice & footer ---------- */
+.notice{
+    display:flex;gap:12px;align-items:flex-start;
+    margin:40px 0 0;padding:18px 20px;
+    background:var(--primary-soft);
+    border:1px solid #d9dcff;border-radius:var(--radius);
+    color:#3b3f73;font-size:14px;
+}
+.notice p{color:inherit;font-size:14px}
+footer{padding:36px 0 48px}
+
+/* ---------- Responsive ---------- */
+@media(max-width:960px){
+    .grid-3{grid-template-columns:repeat(2,1fr)}
+    .steps{grid-template-columns:repeat(2,1fr)}
+}
+
+@media(max-width:720px){
+    .menu-btn{display:inline-flex}
+    .nav-links{
+        display:none;position:absolute;left:0;right:0;top:100%;
+        flex-direction:column;align-items:stretch;
+        padding:10px 4%;background:#fff;
+        border-bottom:1px solid var(--border);
+        box-shadow:var(--shadow-md);
+    }
+    .nav-links.show{display:flex}
+    .nav-links a.link{padding:12px}
+    .grid-2,.grid-3,.steps,.result-grid{grid-template-columns:1fr}
+    .boundary{grid-template-columns:1fr;gap:6px}
+    .boundary-arrow{transform:rotate(90deg);text-align:center}
+    .sim{padding:20px}
+    .hero{padding-top:28px}
+    .hero-actions .btn{flex:1}
+    .attack-actions{width:100%}
+    .attack-actions .btn{flex:1}
+}
+
+@media(prefers-reduced-motion:reduce){
+    *{transition:none !important;scroll-behavior:auto !important}
+}
+</style>
+</head>
+
+
+<body>
+
+{# ============================================================
+   Reusable attack card.  `keys` = names to look for in `rules`;
+   the first one is the value submitted to the existing form.
+   ============================================================ #}
+{% macro attack_card(rules, keys, icon, short, definition, detection, response, prevention) %}
+{% set ns = namespace(found=false) %}
+{% for k in keys %}{% if k in rules %}{% set ns.found = true %}{% endif %}{% endfor %}
+<article class="card attack">
+    <div class="attack-top">
+        <div class="icon" aria-hidden="true">{{ icon }}</div>
+        <div>
+            <h3>{{ keys[0] }}</h3>
+            <p>{{ short }}</p>
+        </div>
+    </div>
+
+    <div class="attack-meta">
+        {% if ns.found %}
+        <span class="status"><span class="dot"></span>Rule active</span>
+        {% else %}
+        <span class="status off"><span class="dot"></span>No rule defined</span>
+        {% endif %}
+        <div class="attack-actions">
+            <button type="button" class="btn btn-primary btn-sm" data-simulate="{{ keys[0] }}">Simulate</button>
+        </div>
+    </div>
+
+    <button type="button" class="more" aria-expanded="false">
+        <span>Learn more</span>
+        <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+
+    <div class="panel">
+        <div class="panel-clip">
+            <div class="panel-body">
+                <div class="detail"><h4>Definition</h4><p>{{ definition }}</p></div>
+                <div class="detail"><h4>Detection concept</h4><p>{{ detection }}</p></div>
+                <div class="detail"><h4>Firewall response</h4><p>{{ response }}</p></div>
+                <div class="detail"><h4>Prevention</h4><p>{{ prevention }}</p></div>
+            </div>
+        </div>
+    </div>
+</article>
+{% endmacro %}
+
+
+<!-- ========================================================
+     TOP NAVIGATION
+========================================================= -->
+
+<header class="nav">
+<div class="container nav-inner">
+
+<a class="brand" href="{{ url_for('home') }}">
+<span class="brand-mark">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 3v6c0 5-3.4 9.3-8 11-4.6-1.7-8-6-8-11V5l8-3z"/></svg>
+</span>
+Firewall Lab
+</a>
+
+<nav class="nav-links" id="navLinks" aria-label="Page sections">
+<a class="link" href="#learn">Learn</a>
+<a class="link" href="#process">Process</a>
+<a class="link" href="#attacks">Attacks</a>
+<a class="link" href="#rules">Rules</a>
+<a class="link" href="#simulator">Simulator</a>
+
+{% if session.get("admin_username") %}
+<div class="admin">
+🛡 Admin: {{ session.get("admin_username") }}
+</div>
+{% endif %}
+</nav>
+
+<button type="button" class="menu-btn" id="menuBtn" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+</button>
+
+</div>
+</header>
+
+
+<main class="container">
+
+
+<!-- ========================================================
+     INTRODUCTION
+========================================================= -->
+
+<section class="hero">
+
+<a class="back" href="{{ url_for('home') }}">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+Back to Home
+</a>
+
+<div><span class="pill">Cybersecurity learning lab</span></div>
+
+<h1>Firewall Security Laboratory</h1>
+
+<p>
+A firewall acts as a security control between a trusted system
+and potentially untrusted network traffic. It examines traffic,
+compares it with security rules and decides whether the traffic
+should be allowed or blocked.
+</p>
+
+<p style="margin-top:10px">
+This laboratory demonstrates that decision-making process safely.
+No real attack traffic is generated and no external system is
+scanned or attacked.
+</p>
+
+<div class="hero-actions">
+<a class="btn btn-primary" href="#simulator">
+Open the simulator
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+</a>
+<a class="btn btn-ghost" href="#learn">How firewalls work</a>
+</div>
+
+</section>
+
+
+<!-- ========================================================
+     FIREWALL THEORY
+========================================================= -->
+
+<section class="section" id="learn">
+
+<div class="section-head">
+<h2>How does a firewall protect a system?</h2>
+<p>
+A firewall controls network traffic entering or leaving a protected
+system, following predefined security policies. Select a card to
+read more.
+</p>
+</div>
+
+<div class="grid grid-2">
+
+<article class="card">
+<button type="button" class="toggle" aria-expanded="false">
+<span class="icon" aria-hidden="true">🛡️</span>
+<span class="toggle-text">
+<h3>What is a firewall?</h3>
+<p>A security boundary that allows or blocks traffic.</p>
+</span>
+<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+</button>
+<div class="panel"><div class="panel-clip"><div class="panel-body">
+<div class="detail"><h4>What it is</h4><p>A mechanism that controls network traffic entering or leaving a protected system or network.</p></div>
+<div class="detail"><h4>How it works</h4><p>Traffic reaches the firewall, which examines information about the request and compares it against its configured rules.</p></div>
+<div class="detail"><h4>What the firewall does</h4><p>If the traffic matches a rule that says <strong>BLOCK</strong>, the simulated firewall rejects it. If no malicious rule is matched, the traffic is <strong>ALLOWED</strong> according to the demonstration policy.</p></div>
+<div class="detail"><h4>Why it matters</h4><p>Without a firewall, every request could reach the application directly.</p></div>
+</div></div></div>
+</article>
+
+<article class="card">
+<button type="button" class="toggle" aria-expanded="false">
+<span class="icon" aria-hidden="true">🔎</span>
+<span class="toggle-text">
+<h3>What does it check?</h3>
+<p>Source, destination, protocol, rules and threat class.</p>
+</span>
+<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+</button>
+<div class="panel"><div class="panel-clip"><div class="panel-body">
+<div class="detail"><h4>What it is</h4><p>A set of properties the firewall inspects on every request.</p></div>
+<div class="detail"><h4>How it works</h4><p>The firewall looks at the traffic source, the destination or service, the protocol and request characteristics, then applies security rules and a threat classification.</p></div>
+<div class="detail"><h4>What the firewall does</h4><p>It combines these checks into a single decision: allow or block.</p></div>
+<div class="detail"><h4>Why it matters</h4><p>Checking several properties makes it harder for harmful traffic to pass as normal.</p></div>
+</div></div></div>
+</article>
+
+</div>
+
+<div class="card boundary" style="margin-top:16px">
+<div class="boundary-box">
+<div class="icon" aria-hidden="true">🌐</div>
+<strong>External traffic</strong>
+<span>Potentially untrusted requests</span>
+</div>
+<div class="boundary-arrow" aria-hidden="true">→</div>
+<div class="boundary-box fw">
+<div class="icon" aria-hidden="true">🛡️</div>
+<strong>Firewall</strong>
+<span>Inspect, compare, decide</span>
+</div>
+<div class="boundary-arrow" aria-hidden="true">→</div>
+<div class="boundary-box">
+<div class="icon" aria-hidden="true">🖥️</div>
+<strong>Protected system</strong>
+<span>Application and resources</span>
+</div>
+</div>
+
+</section>
+
+
+<!-- ========================================================
+     FIREWALL PROCESS
+========================================================= -->
+
+<section class="section" id="process">
+
+<div class="section-head">
+<h2>Firewall decision process</h2>
+<p>
+Every simulated request follows the same six steps. After you run a
+simulation, the steps below show the outcome.
+</p>
+</div>
+
+<div class="card pipeline-wrap" style="transform:none">
+
+<div class="steps{% if result %} has-result{% if result.detected %} blocked{% else %} allowed{% endif %}{% endif %}">
+
+<article class="card step">
+<button type="button" class="toggle" aria-expanded="false">
+<span class="step-num">1</span>
+<span class="toggle-text"><h3>Request</h3><p>Traffic reaches the boundary.</p></span>
+<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+</button>
+<div class="panel"><div class="panel-clip"><div class="panel-body">
+<div class="detail"><h4>What it is</h4><p>The simulated attack type you enter in the form.</p></div>
+<div class="detail"><h4>How it works</h4><p>The request is sent to the firewall instead of directly to the application.</p></div>
+<div class="detail"><h4>What the firewall does</h4><p>Receives the request and starts inspection.</p></div>
+<div class="detail"><h4>Why it matters</h4><p>All traffic must pass the same checkpoint.</p></div>
+</div></div></div>
+</article>
+
+<article class="card step">
+<button type="button" class="toggle" aria-expanded="false">
+<span class="step-num">2</span>
+<span class="toggle-text"><h3>Traffic analysis</h3><p>The request is inspected.</p></span>
+<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+</button>
+<div class="panel"><div class="panel-clip"><div class="panel-body">
+<div class="detail"><h4>What it is</h4><p>Examination of the request's source, target and characteristics.</p></div>
+<div class="detail"><h4>How it works</h4><p>The firewall reads the simulated request details.</p></div>
+<div class="detail"><h4>What the firewall does</h4><p>Prepares the information needed for rule matching.</p></div>
+<div class="detail"><h4>Why it matters</h4><p>Good decisions need accurate information about the traffic.</p></div>
+</div></div></div>
+</article>
+
+<article class="card step">
+<button type="button" class="toggle" aria-expanded="false">
+<span class="step-num">3</span>
+<span class="toggle-text"><h3>Rule check</h3><p>Compared with defined rules.</p></span>
+<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+</button>
+<div class="panel"><div class="panel-clip"><div class="panel-body">
+<div class="detail"><h4>What it is</h4><p>Matching the request against the firewall rule set.</p></div>
+<div class="detail"><h4>How it works</h4><p>The attack type is looked up in the defined security rules.</p></div>
+<div class="detail"><h4>What the firewall does</h4><p>Finds a matching rule, or finds none.</p></div>
+<div class="detail"><h4>Why it matters</h4><p>Rules are the policy that tells the firewall what to do.</p></div>
+</div></div></div>
+</article>
+
+<article class="card step">
+<button type="button" class="toggle" aria-expanded="false">
+<span class="step-num">4</span>
+<span class="toggle-text"><h3>Threat detection</h3><p>The request is classified.</p></span>
+<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+</button>
+<div class="panel"><div class="panel-clip"><div class="panel-body">
+<div class="detail"><h4>What it is</h4><p>Assigning a category and severity to a matched threat.</p></div>
+<div class="detail"><h4>How it works</h4><p>A matching rule provides the category and severity.</p></div>
+<div class="detail"><h4>What the firewall does</h4><p>Marks the request as a known threat or as normal traffic.</p></div>
+<div class="detail"><h4>Why it matters</h4><p>Severity helps administrators prioritise what they review.</p></div>
+</div></div></div>
+</article>
+
+<article class="card step final">
+<button type="button" class="toggle" aria-expanded="false">
+<span class="step-num">5</span>
+<span class="toggle-text">
+<h3>Allow or block</h3>
+<p>
+{% if result %}
+{% if result.detected %}<span class="red"><strong>Blocked</strong> for this request.</span>{% else %}<span class="green"><strong>Allowed</strong> for this request.</span>{% endif %}
+{% else %}
+The policy decides the action.
+{% endif %}
+</p>
+</span>
+<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+</button>
+<div class="panel"><div class="panel-clip"><div class="panel-body">
+<div class="detail"><h4>What it is</h4><p>The firewall's final decision.</p></div>
+<div class="detail"><h4>How it works</h4><p>A matched block rule results in BLOCKED. Otherwise the demonstration policy allows the traffic.</p></div>
+<div class="detail"><h4>What the firewall does</h4><p>Stops the request before it reaches the protected system, or lets it continue.</p></div>
+<div class="detail"><h4>Why it matters</h4><p>This is the step that actually protects the application.</p></div>
+</div></div></div>
+</article>
+
+<article class="card step">
+<button type="button" class="toggle" aria-expanded="false">
+<span class="step-num">6</span>
+<span class="toggle-text"><h3>Log</h3><p>The event is recorded.</p></span>
+<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+</button>
+<div class="panel"><div class="panel-clip"><div class="panel-body">
+<div class="detail"><h4>What it is</h4><p>A saved record of the decision.</p></div>
+<div class="detail"><h4>How it works</h4><p>The event is stored in the project's security database.</p></div>
+<div class="detail"><h4>What the firewall does</h4><p>Keeps the record so it can be reviewed later.</p></div>
+<div class="detail"><h4>Why it matters</h4><p>Logs support investigation, auditing and reporting.</p></div>
+</div></div></div>
+</article>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- ========================================================
+     ATTACK CARDS
+========================================================= -->
+
+<section class="section" id="attacks">
+
+<div class="section-head">
+<h2>Common attack types</h2>
+<p>
+Learn how each attack works and how a firewall responds. The
+Simulate button only fills in the simulator below, and nothing is
+executed against any real system.
+</p>
+</div>
+
+<div class="grid grid-3">
+
+{{ attack_card(rules, ['SQL Injection'], '💉',
+    'Malicious database commands hidden in input.',
+    'An attack where input fields are used to insert database commands, trying to read or change data the user should not access.',
+    'The firewall looks for suspicious command patterns in request data and matches the traffic against a known SQL injection rule.',
+    'Blocks the request before it reaches the application and records the event with its severity.',
+    'Use parameterised queries, validate input, apply least-privilege database accounts and keep a web application firewall in front of the app.') }}
+
+{{ attack_card(rules, ['Brute Force'], '🔑',
+    'Repeated guesses of passwords or keys.',
+    'An attack that tries many username and password combinations until one works.',
+    'The firewall notices a high number of failed or repeated login attempts coming from the same source.',
+    'Blocks or rate-limits the source and logs the repeated attempts for review.',
+    'Use strong passwords, multi-factor authentication, account lockouts and login rate limiting.') }}
+
+{{ attack_card(rules, ['Port Scan'], '📡',
+    'Probing a system for open services.',
+    'Reconnaissance that checks many network ports to discover which services are listening.',
+    'The firewall sees one source contacting many different ports in a short time.',
+    'Drops the probing traffic so the system reveals less about its open services.',
+    'Close unused ports, expose only needed services and monitor for scanning patterns.') }}
+
+{{ attack_card(rules, ['Cross-Site Scripting (XSS)', 'XSS'], '📝',
+    'Untrusted script injected into a web page.',
+    'An attack where script code is placed into a page so that it runs in another user\'s browser.',
+    'The firewall inspects request content for script-like patterns and matches them against an XSS rule.',
+    'Blocks the request so the harmful content is never delivered to the application or other users.',
+    'Encode output, validate input, set a Content Security Policy and use secure cookie flags.') }}
+
+{{ attack_card(rules, ['DDoS'], '🌊',
+    'Overwhelming a service with traffic.',
+    'A distributed denial-of-service attack floods a system with requests so real users cannot reach it.',
+    'The firewall recognises abnormal traffic volume from many sources hitting the same target.',
+    'Filters or limits the flood so legitimate traffic can keep reaching the service.',
+    'Use rate limiting, traffic filtering, load balancing and upstream DDoS protection services.') }}
+
+{{ attack_card(rules, ['Directory Traversal'], '📁',
+    'Trying to reach files outside the allowed folder.',
+    'An attack that manipulates file paths to access files and folders that should be off limits.',
+    'The firewall checks requested paths for patterns that try to move up out of the permitted directory.',
+    'Blocks the request and stops it from touching the file system.',
+    'Validate file paths, restrict file access permissions and never build paths directly from user input.') }}
+
+</div>
+
+</section>
+
+
+<!-- ========================================================
+     DEFINED FIREWALL RULES
+========================================================= -->
+
+<section class="section" id="rules">
+
+<div class="section-head">
+<h2>Defined firewall security rules</h2>
+<p>
+These are the attack categories currently defined in this
+simulation. If an incoming simulated attack matches one of
+these rules, the firewall will block it.
+</p>
+</div>
+
+<div class="grid grid-3">
+
+{% for name, rule in rules.items() %}
+
+<article class="card">
+
+<button type="button" class="toggle" aria-expanded="false">
+<span class="icon" aria-hidden="true">🧱</span>
+<span class="toggle-text">
+<h3>{{ name }}</h3>
+<span class="rule-top">
+<span class="tag">{{ rule.category }}</span>
+
+{% if rule.severity == "CRITICAL" %}
+<span class="tag critical">{{ rule.severity }}</span>
+
+{% elif rule.severity == "HIGH" %}
+<span class="tag high">{{ rule.severity }}</span>
+
+{% elif rule.severity == "MEDIUM" %}
+<span class="tag medium">{{ rule.severity }}</span>
+
+{% else %}
+<span class="tag low">{{ rule.severity }}</span>
+{% endif %}
+
+<span class="tag action">🛑 {{ rule.action }}</span>
+</span>
+</span>
+<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+</button>
+
+<div class="panel"><div class="panel-clip"><div class="panel-body">
+<div class="detail"><h4>What it is</h4><p>A rule for <strong>{{ name }}</strong> in the <strong>{{ rule.category }}</strong> category.</p></div>
+<div class="detail"><h4>How it works</h4><p>When a simulated request matches this attack type, the firewall finds this rule during the rule check.</p></div>
+<div class="detail"><h4>What the firewall does</h4><p>The configured action is <strong>{{ rule.action }}</strong>.</p></div>
+<div class="detail"><h4>Why it matters</h4><p>This threat is rated <strong>{{ rule.severity }}</strong>, which helps decide how urgently it should be reviewed.</p></div>
+</div></div></div>
+
+</article>
+
+{% endfor %}
+
+</div>
+
+</section>
+
+
+<!-- ========================================================
+     ATTACK SIMULATION
+========================================================= -->
+
+<section class="section" id="simulator">
+
+<div class="card sim" style="transform:none">
+
+<div class="sim-head">
+<div class="icon" aria-hidden="true">⚡</div>
+<div>
+<h2>Attack the protected system</h2>
+<p>
+Select or type an attack. The firewall will check whether
+that attack has been defined in its security rules.
+</p>
+</div>
+</div>
+
+<form method="POST">
+
+<label for="attack_type">
+Attack type
+</label>
+
+<input
+type="text"
+id="attack_type"
+name="attack_type"
+list="attack-list"
+placeholder="Example: SQL Injection"
+required
+>
+
+<datalist id="attack-list">
+
+<option value="SQL Injection">
+<option value="Brute Force">
+<option value="Port Scan">
+<option value="Cross-Site Scripting (XSS)">
+<option value="DDoS">
+<option value="Directory Traversal">
+<option value="Normal Traffic">
+
+</datalist>
+
+<div class="chips" aria-label="Quick fill">
+<button type="button" class="chip" data-fill="SQL Injection">SQL Injection</button>
+<button type="button" class="chip" data-fill="Brute Force">Brute Force</button>
+<button type="button" class="chip" data-fill="Port Scan">Port Scan</button>
+<button type="button" class="chip" data-fill="Cross-Site Scripting (XSS)">XSS</button>
+<button type="button" class="chip" data-fill="DDoS">DDoS</button>
+<button type="button" class="chip" data-fill="Directory Traversal">Directory Traversal</button>
+<button type="button" class="chip" data-fill="Normal Traffic">Normal Traffic</button>
+</div>
+
+<button type="submit" class="btn btn-primary">
+Launch simulated attack
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+</button>
+
+</form>
+
+
+<!-- ========================================================
+     RESULT
+========================================================= -->
+
+{% if result %}
+
+<div id="result" class="result
+{% if result.detected %}
+result-blocked
+{% else %}
+result-allowed
+{% endif %}
+">
+
+{% if result.detected %}
+
+<div class="result-title red">
+🛑 Attack blocked
+</div>
+
+<p>
+The firewall recognized the simulated attack because it
+matched a defined security rule. The request was stopped
+before reaching the protected system.
+</p>
+
+{% else %}
+
+<div class="result-title green">
+✅ Traffic allowed
+</div>
+
+<p>
+The firewall did not find a matching attack rule. This
+simulation therefore allows the traffic to continue.
+</p>
+
+{% endif %}
+
+
+<div class="result-grid">
+
+<div class="result-item">
+
+<b>Detected attack</b>
+
+{{ result.attack }}
+
+</div>
+
+
+<div class="result-item">
+
+<b>Category</b>
+
+{{ result.category }}
+
+</div>
+
+
+<div class="result-item">
+
+<b>Severity</b>
+
+{% if result.severity == "CRITICAL" %}
+<span class="red">{{ result.severity }}</span>
+
+{% elif result.severity == "HIGH" %}
+<span class="red">{{ result.severity }}</span>
+
+{% elif result.severity == "MEDIUM" %}
+<span class="yellow">{{ result.severity }}</span>
+
+{% else %}
+<span class="green">{{ result.severity }}</span>
+{% endif %}
+
+</div>
+
+
+<div class="result-item">
+
+<b>Firewall decision</b>
+
+{% if result.detected %}
+<span class="red">
+🛑 {{ result.action }}
+</span>
+{% else %}
+<span class="green">
+✓ {{ result.action }}
+</span>
+{% endif %}
+
+</div>
+
+
+<div class="result-item">
+
+<b>Source</b>
+
+{{ result.source_ip }}
+
+</div>
+
+
+<div class="result-item">
+
+<b>Target</b>
+
+{{ result.target }}
+
+</div>
+
+</div>
+
+</div>
+
+{% endif %}
+
+</div>
+
+</section>
+
+
+<!-- ========================================================
+     WHAT HAPPENS WHEN AN ATTACK IS DETECTED
+========================================================= -->
+
+<section class="section" id="detected">
+
+<div class="section-head">
+<h2>What happens when an attack is detected?</h2>
+<p>Select a stage to see what the simulated firewall does.</p>
+</div>
+
+<div class="grid grid-3">
+
+<article class="card">
+<button type="button" class="toggle" aria-expanded="false">
+<span class="icon" aria-hidden="true">🔍</span>
+<span class="toggle-text"><h3>Detection</h3><p>The attack type is compared with the rules.</p></span>
+<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+</button>
+<div class="panel"><div class="panel-clip"><div class="panel-body">
+<div class="detail"><h4>What it is</h4><p>The first reaction to an incoming request.</p></div>
+<div class="detail"><h4>How it works</h4><p>The simulated firewall receives the attack type and compares it with the defined security rules.</p></div>
+<div class="detail"><h4>What the firewall does</h4><p>Starts the matching process.</p></div>
+<div class="detail"><h4>Why it matters</h4><p>Nothing can be blocked until it is recognised.</p></div>
+</div></div></div>
+</article>
+
+<article class="card">
+<button type="button" class="toggle" aria-expanded="false">
+<span class="icon" aria-hidden="true">🎯</span>
+<span class="toggle-text"><h3>Rule match</h3><p>A matching rule is identified.</p></span>
+<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+</button>
+<div class="panel"><div class="panel-clip"><div class="panel-body">
+<div class="detail"><h4>What it is</h4><p>Finding the rule that covers this attack.</p></div>
+<div class="detail"><h4>How it works</h4><p>If the attack is present in the firewall rule set, the security engine identifies a matching rule.</p></div>
+<div class="detail"><h4>What the firewall does</h4><p>Reads the rule's category, severity and action.</p></div>
+<div class="detail"><h4>Why it matters</h4><p>The rule decides how the request is treated.</p></div>
+</div></div></div>
+</article>
+
+<article class="card">
+<button type="button" class="toggle" aria-expanded="false">
+<span class="icon" aria-hidden="true">🛑</span>
+<span class="toggle-text"><h3>Blocking</h3><p>The decision changes to BLOCKED.</p></span>
+<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+</button>
+<div class="panel"><div class="panel-clip"><div class="panel-body">
+<div class="detail"><h4>What it is</h4><p>The action taken on a known threat.</p></div>
+<div class="detail"><h4>How it works</h4><p>The simulated firewall changes the decision to <strong>BLOCKED</strong>.</p></div>
+<div class="detail"><h4>What the firewall does</h4><p>Rejects the request.</p></div>
+<div class="detail"><h4>Why it matters</h4><p>The harmful request never reaches the application.</p></div>
+</div></div></div>
+</article>
+
+<article class="card">
+<button type="button" class="toggle" aria-expanded="false">
+<span class="icon" aria-hidden="true">🏰</span>
+<span class="toggle-text"><h3>Isolation</h3><p>The application is kept apart from the threat.</p></span>
+<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+</button>
+<div class="panel"><div class="panel-clip"><div class="panel-body">
+<div class="detail"><h4>What it is</h4><p>Separation between the request and the protected application.</p></div>
+<div class="detail"><h4>How it works</h4><p>The demonstration treats the protected application as isolated from the detected malicious request.</p></div>
+<div class="detail"><h4>What the firewall does</h4><p>Keeps the request outside the boundary.</p></div>
+<div class="detail"><h4>Why it matters</h4><p>Isolation limits the damage a threat can do.</p></div>
+</div></div></div>
+</article>
+
+<article class="card">
+<button type="button" class="toggle" aria-expanded="false">
+<span class="icon" aria-hidden="true">✅</span>
+<span class="toggle-text"><h3>Security status</h3><p>The system remains secure.</p></span>
+<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+</button>
+<div class="panel"><div class="panel-clip"><div class="panel-body">
+<div class="detail"><h4>What it is</h4><p>The state of the protected system after the decision.</p></div>
+<div class="detail"><h4>How it works</h4><p>The protected system remains marked as <strong>SECURE</strong> in the simulation.</p></div>
+<div class="detail"><h4>What the firewall does</h4><p>Confirms the system was not affected.</p></div>
+<div class="detail"><h4>Why it matters</h4><p>It shows the outcome of a successful defence.</p></div>
+</div></div></div>
+</article>
+
+<article class="card">
+<button type="button" class="toggle" aria-expanded="false">
+<span class="icon" aria-hidden="true">🗂️</span>
+<span class="toggle-text"><h3>Event logging</h3><p>The event is saved for review.</p></span>
+<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+</button>
+<div class="panel"><div class="panel-clip"><div class="panel-body">
+<div class="detail"><h4>What it is</h4><p>A permanent record of what happened.</p></div>
+<div class="detail"><h4>How it works</h4><p>The event is recorded in the project's security database.</p></div>
+<div class="detail"><h4>What the firewall does</h4><p>Stores the details so they can be reviewed later.</p></div>
+<div class="detail"><h4>Why it matters</h4><p>Logs make it possible to investigate and report on incidents.</p></div>
+</div></div></div>
+</article>
+
+</div>
+
+</section>
+
+
+<!-- ========================================================
+     FINAL SECURITY NOTICE
+========================================================= -->
+
+<div class="notice">
+
+<span aria-hidden="true">⚠️</span>
+
+<p>
+<strong>Educational security simulation.</strong>
+This laboratory demonstrates firewall decision-making using
+predefined rules. It does not generate real DDoS traffic,
+perform real port scanning, execute SQL injection, execute
+JavaScript against another system, access unauthorized files,
+or attack external systems.
+The "BLOCKED" result represents the simulated firewall decision
+and demonstrates how a security control can stop a known threat
+before it reaches a protected application.
+</p>
+
+</div>
+
+</main>
+
+<footer></footer>
+
+
+<script>
+(function () {
+    "use strict";
+
+    /* ---- Expand / collapse: any .toggle or .more button inside a .card ---- */
+    document.querySelectorAll(".toggle, .more").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+            var card = btn.closest(".card");
+            var open = card.classList.toggle("open");
+            card.querySelectorAll(":scope > .toggle, :scope > .more").forEach(function (b) {
+                b.setAttribute("aria-expanded", open ? "true" : "false");
+            });
+        });
+    });
+
+    /* ---- Mobile navigation ---- */
+    var menuBtn = document.getElementById("menuBtn");
+    var navLinks = document.getElementById("navLinks");
+
+    menuBtn.addEventListener("click", function () {
+        var show = navLinks.classList.toggle("show");
+        menuBtn.setAttribute("aria-expanded", show ? "true" : "false");
+    });
+
+    navLinks.querySelectorAll("a.link").forEach(function (a) {
+        a.addEventListener("click", function () {
+            navLinks.classList.remove("show");
+            menuBtn.setAttribute("aria-expanded", "false");
+        });
+    });
+
+    /* ---- Quick-fill chips (only fill the existing input) ---- */
+    var input = document.getElementById("attack_type");
+
+    document.querySelectorAll("[data-fill]").forEach(function (chip) {
+        chip.addEventListener("click", function () {
+            input.value = chip.getAttribute("data-fill");
+            input.focus();
+        });
+    });
+
+    /* ---- Attack card "Simulate": fill the form and submit it as normal ---- */
+    document.querySelectorAll("[data-simulate]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+            input.value = btn.getAttribute("data-simulate");
+            var form = input.form;
+            if (form.requestSubmit) { form.requestSubmit(); } else { form.submit(); }
+        });
+    });
+
+    /* ---- After a simulation, bring the result into view ---- */
+    var result = document.getElementById("result");
+    if (result) {
+        result.scrollIntoView({ block: "center" });
+    }
+})();
+</script>
+
+</body>
+</html>

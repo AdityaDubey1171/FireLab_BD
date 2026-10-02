@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ attack_name }} - Security Lab</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="topbar">
+        <a href="{{ url_for('home') }}" class="back">← Back to Home</a>
+    </div>
+
+
+    <div class="admin-header">
+
+        <span class="badge">CYBERSECURITY SIMULATION</span>
+
+        <h1 style="margin-top:14px">{{ attack_name }}</h1>
+
+        <p>{{ attack.description }}</p>
+
+    </div>
+
+
+    <div class="card page-card">
+
+        <h2>Interactive Simulation</h2>
+
+        <p>
+            Enter sample information below.
+            This is an educational simulation and does
+            not attack or scan a real system.
+        </p>
+
+
+        <form method="POST">
+
+
+            {% if attack_name == "SQL Injection" %}
+
+                <label>Sample input</label>
+
+                <textarea
+                    name="payload"
+                    placeholder="Enter sample application input..."
+                    required></textarea>
+
+
+            {% elif attack_name == "Brute Force" %}
+
+                <label>Simulated login attempts</label>
+
+                <input
+                    type="number"
+                    name="attempts"
+                    min="0"
+                    max="100"
+                    value="5"
+                    required>
+
+
+            {% elif attack_name == "Port Scan" %}
+
+                <label>Sample ports</label>
+
+                <input
+                    type="text"
+                    name="ports"
+                    placeholder="22, 80, 443, 3306"
+                    required>
+
+
+            {% elif attack_name == "DDoS" %}
+
+                <label>Simulated request count</label>
+
+                <input
+                    type="number"
+                    name="requests_count"
+                    min="0"
+                    max="100000"
+                    value="100"
+                    required>
+
+
+            {% elif attack_name == "Cross-Site Scripting (XSS)" %}
+
+                <label>Sample web input</label>
+
+                <textarea
+                    name="payload"
+                    placeholder="Enter sample text..."
+                    required></textarea>
+
+
+            {% elif attack_name == "Directory Traversal" %}
+
+                <label>Sample file path</label>
+
+                <input
+                    type="text"
+                    name="payload"
+                    placeholder="Enter a sample path..."
+                    required>
+
+
+            {% else %}
+
+                <label>Simulation input</label>
+
+                <input
+                    type="text"
+                    name="payload"
+                    required>
+
+            {% endif %}
+
+
+            <button type="submit" class="submit-button">
+                Check &amp; Analyze
+            </button>
+
+        </form>
+
+
+        {% if result %}
+
+            <div class="
+                result
+                {% if result.detected %}
+                    danger
+                {% else %}
+                    safe
+                {% endif %}
+            ">
+
+                {% if result.detected %}
+
+                    <h2>⚠ Suspicious Activity Detected</h2>
+
+                {% else %}
+
+                    <h2>✓ Activity Looks Normal</h2>
+
+                {% endif %}
+
+
+                <p>
+                    <strong>Analysis:</strong>
+                    {{ result.message }}
+                </p>
+
+
+                <p>
+                    <strong>Risk Score:</strong>
+                    {{ result.score }}/100
+                </p>
+
+
+                <div class="meter">
+                    <div
+                        class="meter-fill {% if result.detected %}bad{% else %}ok{% endif %}"
+                        style="width: {{ result.score if result else 0 }}%;"></div>
+                </div>
+
+
+                <ol class="mini-flow done {% if result.detected %}blocked{% else %}allowed{% endif %}">
+                    <li>Request</li>
+                    <li>Traffic analysis</li>
+                    <li>Rule check</li>
+                    <li>Threat detection</li>
+                    <li>{% if result.detected %}Block{% else %}Allow{% endif %}</li>
+                    <li>Log</li>
+                </ol>
+
+
+                {% if result.details %}
+
+                    <h3>What the simulator found</h3>
+
+                    <ul>
+
+                        {% for item in result.details %}
+
+                            <li>{{ item }}</li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                {% endif %}
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <div class="card open" style="margin-top:20px">
+
+        <button type="button" class="toggle" aria-expanded="true">
+            <span class="icon">⚙️</span>
+            <span class="toggle-text">
+                <h3>How the Attack Works</h3>
+                <p>The steps involved, one by one.</p>
+            </span>
+            <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+
+        <div class="panel"><div class="panel-clip"><div class="panel-body">
+
+            <div class="steps">
+
+                {% for step in attack.flow %}
+
+                    <div class="step">
+
+                        <div class="step-number">STEP {{ loop.index }}</div>
+
+                        <p>{{ step }}</p>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div></div></div>
+
+    </div>
+
+
+    <div class="card" style="margin-top:20px">
+
+        <button type="button" class="toggle" aria-expanded="false">
+            <span class="icon">🔎</span>
+            <span class="toggle-text">
+                <h3>Detection</h3>
+                <p>How a firewall can recognise this attack.</p>
+            </span>
+            <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+
+        <div class="panel"><div class="panel-clip"><div class="panel-body">
+
+            <div class="detail">
+                <ul>
+
+                    {% for item in attack.detection %}
+
+                        <li>{{ item }}</li>
+
+                    {% endfor %}
+
+                </ul>
+            </div>
+
+        </div></div></div>
+
+    </div>
+
+
+    <div class="card" style="margin-top:20px">
+
+        <button type="button" class="toggle" aria-expanded="false">
+            <span class="icon">🕒</span>
+            <span class="toggle-text">
+                <h3>Security Timeline</h3>
+                <p>What happens, in order.</p>
+            </span>
+            <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+
+        <div class="panel"><div class="panel-clip"><div class="panel-body">
+
+            <div class="detail">
+                <ol>
+
+                    {% for item in attack.timeline %}
+
+                        <li>{{ item }}</li>
+
+                    {% endfor %}
+
+                </ol>
+            </div>
+
+        </div></div></div>
+
+    </div>
+
+
+    <div class="card" style="margin-top:20px">
+
+        <button type="button" class="toggle" aria-expanded="false">
+            <span class="icon">🛡️</span>
+            <span class="toggle-text">
+                <h3>How to Prevent It</h3>
+                <p>Practical defensive controls.</p>
+            </span>
+            <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+
+        <div class="panel"><div class="panel-clip"><div class="panel-body">
+
+            <div class="detail">
+                <ul>
+
+                    {% for item in attack.prevention %}
+
+                        <li>{{ item }}</li>
+
+                    {% endfor %}
+
+                </ul>
+            </div>
+
+        </div></div></div>
+
+    </div>
+
+
+    <div class="notice">
+
+        <strong>Educational note:</strong>
+
+        This project only analyzes simulated input.
+        It does not execute supplied SQL, scan real
+        machines, generate real DDoS traffic, guess
+        passwords, or access files.
+
+    </div>
+
+</div>
+
+<script>
+(function () {
+    "use strict";
+    document.querySelectorAll(".toggle, .more").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+            var card = btn.closest(".card");
+            if (!card) { return; }
+            var open = card.classList.toggle("open");
+            card.querySelectorAll(":scope > .toggle, :scope > .more").forEach(function (b) {
+                b.setAttribute("aria-expanded", open ? "true" : "false");
+            });
+        });
+    });
+})();
+</script>
+
+</body>
+
+</html>

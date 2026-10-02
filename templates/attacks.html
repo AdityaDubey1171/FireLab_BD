@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Attack Simulation Center</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+{# Reusable attack card #}
+{% macro attack_card(slug, name, icon, sub, short, tag1, tag2, severity, definition, detection, response, prevention) %}
+<div class="card attack-card">
+
+    <div class="attack-head">
+        <div class="attack-icon">{{ icon }}</div>
+        <div>
+            <h3>{{ name }}</h3>
+            <p><strong style="color:var(--primary-dark);font-size:13px">{{ sub }}</strong></p>
+            <p style="margin-top:4px">{{ short }}</p>
+        </div>
+    </div>
+
+    <div class="attack-badges">
+        <span class="tag">{{ tag1 }}</span>
+        <span class="tag">{{ tag2 }}</span>
+        <span class="tag {{ severity|lower }}">{{ severity }}</span>
+    </div>
+
+    <div class="attack-meta">
+        <span class="status"><span class="dot"></span>Simulation ready</span>
+        <a class="simulate-link" href="{{ url_for('simulate_attack', slug=slug) }}">
+            Simulate &amp; Learn
+        </a>
+    </div>
+
+    <button type="button" class="more" aria-expanded="false">
+        <span>Learn more</span>
+        <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+
+    <div class="panel"><div class="panel-clip"><div class="panel-body">
+        <div class="detail"><h4>Definition</h4><p>{{ definition }}</p></div>
+        <div class="detail"><h4>Detection concept</h4><p>{{ detection }}</p></div>
+        <div class="detail"><h4>Firewall response</h4><p>{{ response }}</p></div>
+        <div class="detail"><h4>Prevention</h4><p>{{ prevention }}</p></div>
+    </div></div></div>
+
+</div>
+{% endmacro %}
+
+
+<div class="container">
+
+<div class="topbar">
+<a class="back" href="{{url_for('home')}}">← Back to Home</a>
+<a class="nav-button" href="{{url_for('firewall')}}">🛡 Firewall Lab</a>
+</div>
+
+<div class="admin-header">
+<span class="badge">CYBERSECURITY LEARNING LAB</span>
+<h1 style="margin-top:14px">Attack Simulation Center</h1>
+<p>
+Explore common cybersecurity attacks through safe educational
+simulations. Select an attack to understand detection,
+risk analysis and prevention.
+</p>
+</div>
+
+<div class="stats-row">
+<div class="stat"><b>06</b>Attack Simulations</div>
+<div class="stat"><b>03</b>Risk Levels</div>
+<div class="stat"><b>100%</b>Educational</div>
+<div class="stat"><b>01</b>Firewall Lab</div>
+</div>
+
+<div class="attack-grid">
+
+{{ attack_card('sql-injection', 'SQL Injection', '🗄️', 'Database manipulation',
+    'Learn how suspicious database-related input can be detected before reaching a database.',
+    'Web Security', 'Database', 'HIGH',
+    'An attack where input fields are used to insert database commands, trying to read or change data that should not be accessible.',
+    'The firewall looks for suspicious command patterns in request data.',
+    'Blocks the request before it reaches the database and logs the event.',
+    'Use parameterised queries, validate input and limit database permissions.') }}
+
+{{ attack_card('brute-force', 'Brute Force', '🔐', 'Repeated authentication attempts',
+    'Learn how repeated login attempts can be detected using thresholds and rate limiting.',
+    'Authentication', 'Rate Limiting', 'HIGH',
+    'An attack that tries many password combinations until one works.',
+    'The firewall counts login attempts from one source and compares them with a threshold.',
+    'Blocks or rate-limits the source and records the attempts.',
+    'Use strong passwords, multi-factor authentication and account lockouts.') }}
+
+{{ attack_card('port-scan', 'Port Scan', '🔎', 'Network reconnaissance',
+    'Understand how repeated connection attempts to different ports can be recognized.',
+    'Network', 'Reconnaissance', 'MEDIUM',
+    'Reconnaissance that checks many ports to discover which services are open.',
+    'The firewall sees one source contacting many ports in a short time.',
+    'Drops the probing traffic so fewer details are revealed.',
+    'Close unused ports and monitor for scanning patterns.') }}
+
+{{ attack_card('xss', 'Cross-Site Scripting', '🌐', 'Browser-side script injection',
+    'Learn how suspicious script-like input can be detected and blocked by web security controls.',
+    'Web Security', 'Browser', 'HIGH',
+    'An attack where script-like content is placed into a page so that it runs in another user browser.',
+    'The firewall inspects request content for script-like patterns.',
+    'Blocks the request so the content is never delivered.',
+    'Encode output, validate input and use a Content Security Policy.') }}
+
+{{ attack_card('ddos', 'DDoS', '🌊', 'Service availability simulation',
+    'Understand how abnormal request volume can be detected and mitigated.',
+    'Network', 'Availability', 'CRITICAL',
+    'A flood of requests meant to make a service unavailable to real users.',
+    'The firewall recognises abnormal request volume from many sources.',
+    'Filters or limits the flood so legitimate traffic can continue.',
+    'Use rate limiting, load balancing and upstream DDoS protection.') }}
+
+{{ attack_card('directory-traversal', 'Directory Traversal', '📁', 'Unauthorized path access',
+    'Learn how suspicious file paths can be detected and restricted to approved directories.',
+    'Web Security', 'File Access', 'HIGH',
+    'An attack that manipulates file paths to reach files that should be off limits.',
+    'The firewall checks paths for patterns that try to leave the permitted directory.',
+    'Blocks the request so it never touches the file system.',
+    'Validate paths, restrict permissions and never build paths from raw user input.') }}
+
+</div>
+
+<div class="page-card card" style="margin-top:36px">
+
+<h2>How the Simulation Center Works</h2>
+<p style="margin-bottom:18px">Six simple steps from choosing an attack to learning how to defend against it.</p>
+
+<div class="learn-grid">
+
+<div class="step">
+<div class="step-number">1. Select</div>
+<p>Choose an attack simulation from the six available categories.</p>
+</div>
+
+<div class="step">
+<div class="step-number">2. Enter Data</div>
+<p>Provide harmless sample information for the simulator to analyze.</p>
+</div>
+
+<div class="step">
+<div class="step-number">3. Analyze</div>
+<p>Review the detection result, risk score and security explanation.</p>
+</div>
+
+<div class="step">
+<div class="step-number">4. Firewall</div>
+<p>Open the Firewall Lab to understand packet inspection and rules.</p>
+</div>
+
+<div class="step">
+<div class="step-number">5. Review</div>
+<p>Recorded simulation events can be reviewed through your admin area.</p>
+</div>
+
+<div class="step">
+<div class="step-number">6. Defend</div>
+<p>Each simulation explains practical defensive security controls.</p>
+</div>
+
+</div>
+</div>
+
+<div class="notice">
+<strong>Educational simulation:</strong>
+This project analyzes sample input only. It does not perform
+real network scanning, password guessing, database manipulation,
+DDoS traffic generation or unauthorized file access.
+</div>
+
+</div>
+
+<script src="{{ url_for('static', filename='ui.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,242 @@
+================================================================================
+
+                TYPES OF ATTACKS IN CYBERSECURITY RELATED TO FIREWALLS
+
+================================================================================
+
+
+    INTRODUCTION
+    ------------
+
+    A firewall is a network security system that monitors and controls
+    incoming and outgoing network traffic based on predefined security
+    rules.
+
+    It helps protect computers, servers, and networks from unauthorized
+    access and various cyberattacks.
+
+
+--------------------------------------------------------------------------------
+
+    1. DoS (DENIAL OF SERVICE)
+    ---------------------------
+
+    A DoS attack attempts to make a server, network, or service
+    unavailable by overwhelming it with a large amount of traffic or
+    requests.
+
+    Example:
+        An attacker sends a huge number of requests to a server,
+        making it difficult for legitimate users to access the
+        service.
+
+
+--------------------------------------------------------------------------------
+
+    2. DDoS (DISTRIBUTED DENIAL OF SERVICE)
+    -----------------------------------------
+
+    A DDoS attack is similar to a DoS attack, but the attack traffic
+    comes from multiple compromised devices simultaneously.
+
+    Example:
+        Many infected computers send requests to the same server at
+        the same time, causing the server to become unavailable.
+
+
+--------------------------------------------------------------------------------
+
+    3. PORT SCANNING
+    -----------------
+
+    Port scanning is used to identify open ports and running services
+    on a network.
+
+    Attackers may use this information to identify potential
+    vulnerabilities in a system.
+
+    Firewall Protection:
+        A firewall can restrict access to unnecessary or unauthorized
+        ports.
+
+
+--------------------------------------------------------------------------------
+
+    4. IP SPOOFING
+    ---------------
+
+    IP spoofing occurs when an attacker changes the source IP address
+    of network packets to make them appear to come from a trusted
+    device or network.
+
+    Firewall Protection:
+        Firewalls can use rules to filter suspicious or unauthorized
+        source IP addresses.
+
+
+--------------------------------------------------------------------------------
+
+    5. PACKET SNIFFING
+    --------------------
+
+    Packet sniffing involves capturing and analyzing network packets.
+
+    If network traffic is not properly protected, attackers may be
+    able to obtain sensitive information.
+
+    Firewall Protection:
+        Firewalls can control and monitor network traffic, although
+        encryption is also important for protecting data.
+
+
+--------------------------------------------------------------------------------
+
+    6. MAN-IN-THE-MIDDLE (MITM)
+    ------------------------------
+
+    A Man-in-the-Middle attack occurs when an attacker intercepts
+    communication between two parties.
+
+    The attacker may monitor or manipulate the communication.
+
+    Example:
+        An attacker secretly intercepts communication between a user
+        and a server.
+
+
+--------------------------------------------------------------------------------
+
+    7. BRUTE-FORCE ATTACK
+    -----------------------
+
+    A brute-force attack repeatedly attempts different passwords or
+    credentials to gain unauthorized access.
+
+    Firewall Protection:
+        Firewalls can help restrict suspicious connection attempts,
+        while authentication systems can implement account lockouts
+        and rate limiting.
+
+
+--------------------------------------------------------------------------------
+
+    8. MALWARE / TROJAN TRAFFIC
+    ------------------------------
+
+    Malware or Trojans may attempt to communicate with external
+    command-and-control (C2) servers.
+
+    Firewall Protection:
+        Firewalls can monitor and block suspicious outbound
+        connections based on security rules.
+
+
+--------------------------------------------------------------------------------
+
+    9. APPLICATION-LAYER ATTACK
+    ------------------------------
+
+    Application-layer attacks target applications or web services
+    rather than only the underlying network.
+
+    Examples:
+        - Malicious application requests
+        - HTTP-based flooding
+        - Attempts to exploit vulnerable web applications
+
+    Firewall Protection:
+        Web Application Firewalls (WAFs) can provide specialized
+        protection for web applications.
+
+
+--------------------------------------------------------------------------------
+
+    10. UNAUTHORIZED ACCESS
+    --------------------------
+
+    Unauthorized access occurs when an attacker attempts to access
+    restricted systems, network resources, ports, or services without
+    proper permission.
+
+    Firewall Protection:
+        Firewalls can restrict access according to predefined
+        security rules.
+
+
+================================================================================
+
+                          FIREWALL ATTACK CATEGORIES
+
+================================================================================
+
+    Attack Type                  Main Target
+    ----------------------------  ------------------------------------
+    DoS / DDoS                    Network and service availability
+    IP Spoofing                   Network identity
+    Port Scanning                 Open ports and services
+    SYN Flood                     TCP connections
+    Packet Sniffing               Network traffic
+    MITM                          Communication
+    Application-Layer Attack      Web applications and services
+    Brute-Force Attack            Authentication and credentials
+    Unauthorized Access           Restricted resources
+
+
+================================================================================
+
+                          ROLE OF A FIREWALL IN PROTECTION
+
+================================================================================
+
+    A firewall can help protect a network by:
+
+        - Controlling incoming and outgoing network traffic
+        - Blocking unauthorized connections
+        - Restricting access to specific ports and services
+        - Detecting and filtering suspicious traffic
+        - Blocking connections from known malicious sources
+        - Monitoring network activity according to security rules
+
+
+================================================================================
+
+                                IMPORTANT NOTE
+
+================================================================================
+
+    A traditional firewall cannot prevent every type of cyberattack.
+
+    Modern Next-Generation Firewalls (NGFWs) provide additional
+    security capabilities such as:
+
+        - Intrusion Prevention
+        - Application Control
+        - Malware Detection
+        - Advanced Traffic Inspection
+        - User and Access Control
+
+    A firewall should therefore be used together with other security
+    measures such as:
+
+        - Antivirus / Endpoint Security
+        - Intrusion Detection and Prevention Systems (IDS/IPS)
+        - Strong Authentication
+        - Encryption
+        - Regular Software and Security Updates
+
+
+================================================================================
+
+                                  CONCLUSION
+
+================================================================================
+
+    Firewalls are an important layer of network security. They help
+    control network traffic, prevent unauthorized access, and reduce
+    the risk of various cyberattacks.
+
+    However, no single security solution can provide complete
+    protection. A combination of firewalls and other security
+    technologies is required for effective cybersecurity.
+
+================================================================================

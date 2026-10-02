@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firewall Lab</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+{# Reusable attack card #}
+{% macro attack_card(slug, name, abbr, severity, short, definition, detection, response, prevention) %}
+<div class="card attack-card">
+
+    <div class="attack-head">
+        <div class="attack-icon">{{ abbr }}</div>
+        <div>
+            <h3>{{ name }}</h3>
+            <p>{{ short }}</p>
+        </div>
+    </div>
+
+    <div class="attack-meta">
+        <span class="severity {{ severity|lower }}">{{ severity }}</span>
+        <span class="status"><span class="dot"></span>Simulation ready</span>
+        <a href="{{ url_for('simulate_attack', slug=slug) }}" class="simulate-link">
+            Simulate &amp; Learn →
+        </a>
+    </div>
+
+    <button type="button" class="more" aria-expanded="false">
+        <span>Learn more</span>
+        <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+
+    <div class="panel"><div class="panel-clip"><div class="panel-body">
+        <div class="detail"><h4>Definition</h4><p>{{ definition }}</p></div>
+        <div class="detail"><h4>Detection concept</h4><p>{{ detection }}</p></div>
+        <div class="detail"><h4>Firewall response</h4><p>{{ response }}</p></div>
+        <div class="detail"><h4>Prevention</h4><p>{{ prevention }}</p></div>
+    </div></div></div>
+
+</div>
+{% endmacro %}
+
+
+<header class="navbar">
+
+    <div class="logo">
+        <div class="logo-icon">🛡</div>
+        <div>
+            <h2>Firewall Lab</h2>
+            <span>Cybersecurity Learning Simulator</span>
+        </div>
+    </div>
+
+    <a href="{{ url_for('login') }}" class="nav-button">
+        Admin Login
+    </a>
+
+</header>
+
+
+<main>
+
+    <!-- HERO -->
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <span class="badge">CYBERSECURITY EDUCATION</span>
+
+            <h1>
+                Understand how a
+                <span>Firewall</span>
+                protects a network.
+            </h1>
+
+            <p>
+                Learn how firewalls inspect network requests,
+                identify suspicious behavior and block simulated
+                cyber attacks.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- WHAT IS FIREWALL -->
+
+    <section class="section">
+
+        <div class="section-heading">
+            <span class="section-number">01</span>
+            <div>
+                <h2>What is a Firewall?</h2>
+                <p>
+                    A firewall is a security system that monitors
+                    network traffic and decides whether traffic
+                    should be allowed or blocked according to
+                    predefined security rules.
+                </p>
+            </div>
+        </div>
+
+        <div class="card info-card">
+
+            <button type="button" class="toggle" aria-expanded="false">
+                <span class="info-icon">🛡</span>
+                <span class="toggle-text">
+                    <h3>Network Traffic Protection</h3>
+                    <p>
+                        A firewall acts as a security checkpoint
+                        between trusted and untrusted traffic.
+                        Every request can be inspected before it
+                        reaches a protected system.
+                    </p>
+                </span>
+                <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+
+            <div class="panel"><div class="panel-clip"><div class="panel-body">
+                <div class="detail"><h4>What it is</h4><p>A security control placed between a protected system and the traffic that tries to reach it.</p></div>
+                <div class="detail"><h4>How it works</h4><p>Each request is inspected and compared with predefined security rules.</p></div>
+                <div class="detail"><h4>What the firewall does</h4><p>Allows traffic that is normal and blocks traffic that matches a threat rule.</p></div>
+                <div class="detail"><h4>Why it matters</h4><p>It stops harmful requests before they can reach the application.</p></div>
+            </div></div></div>
+
+        </div>
+
+    </section>
+
+
+    <!-- HOW FIREWALL WORKS -->
+
+    <section class="section dark-section">
+
+        <div class="section-heading">
+            <span class="section-number">02</span>
+            <div>
+                <h2>How Does a Firewall Work?</h2>
+                <p>
+                    The firewall examines incoming or outgoing
+                    traffic and compares it against security rules.
+                    Select a step to learn more.
+                </p>
+            </div>
+        </div>
+
+        <div class="flow">
+
+            <div class="card flow-box">
+                <button type="button" class="toggle" aria-expanded="false">
+                    <span class="step-num">1</span>
+                    <span class="toggle-text"><h3>Request</h3><p>A user request enters the network.</p></span>
+                    <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="panel"><div class="panel-clip"><div class="panel-body">
+                    <div class="detail"><h4>What it is</h4><p>The traffic that wants to reach the protected system.</p></div>
+                    <div class="detail"><h4>How it works</h4><p>The request is sent towards the application and meets the firewall first.</p></div>
+                    <div class="detail"><h4>What the firewall does</h4><p>Stops the request at the boundary for inspection.</p></div>
+                    <div class="detail"><h4>Why it matters</h4><p>Every request passes the same checkpoint.</p></div>
+                </div></div></div>
+            </div>
+
+            <div class="card flow-box">
+                <button type="button" class="toggle" aria-expanded="false">
+                    <span class="step-num">2</span>
+                    <span class="toggle-text"><h3>Traffic Analysis</h3><p>Request details are inspected.</p></span>
+                    <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="panel"><div class="panel-clip"><div class="panel-body">
+                    <div class="detail"><h4>What it is</h4><p>Reading the source, target, protocol and content of the request.</p></div>
+                    <div class="detail"><h4>How it works</h4><p>The firewall collects the facts it needs to make a decision.</p></div>
+                    <div class="detail"><h4>What the firewall does</h4><p>Prepares the data for rule matching.</p></div>
+                    <div class="detail"><h4>Why it matters</h4><p>Accurate information leads to accurate decisions.</p></div>
+                </div></div></div>
+            </div>
+
+            <div class="card flow-box">
+                <button type="button" class="toggle" aria-expanded="false">
+                    <span class="step-num">3</span>
+                    <span class="toggle-text"><h3>Rule Check</h3><p>Compared with security rules.</p></span>
+                    <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="panel"><div class="panel-clip"><div class="panel-body">
+                    <div class="detail"><h4>What it is</h4><p>Matching the request against the defined rule set.</p></div>
+                    <div class="detail"><h4>How it works</h4><p>Each rule describes a known threat pattern and an action.</p></div>
+                    <div class="detail"><h4>What the firewall does</h4><p>Looks for a rule that fits the request.</p></div>
+                    <div class="detail"><h4>Why it matters</h4><p>Rules are the policy that guides every decision.</p></div>
+                </div></div></div>
+            </div>
+
+            <div class="card flow-box">
+                <button type="button" class="toggle" aria-expanded="false">
+                    <span class="step-num">4</span>
+                    <span class="toggle-text"><h3>Threat Detection</h3><p>The request is classified.</p></span>
+                    <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="panel"><div class="panel-clip"><div class="panel-body">
+                    <div class="detail"><h4>What it is</h4><p>Deciding whether the request is a known threat or normal traffic.</p></div>
+                    <div class="detail"><h4>How it works</h4><p>A matching rule gives the category and severity of the threat.</p></div>
+                    <div class="detail"><h4>What the firewall does</h4><p>Labels the request so the right action can be chosen.</p></div>
+                    <div class="detail"><h4>Why it matters</h4><p>Severity helps administrators decide what to review first.</p></div>
+                </div></div></div>
+            </div>
+
+            <div class="card flow-box">
+                <button type="button" class="toggle" aria-expanded="false">
+                    <span class="step-num">5</span>
+                    <span class="toggle-text"><h3>Allow / Block</h3><p>The firewall decides.</p></span>
+                    <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="panel"><div class="panel-clip"><div class="panel-body">
+                    <div class="detail"><h4>What it is</h4><p>The final decision for the request.</p></div>
+                    <div class="detail"><h4>How it works</h4><p>Threats are blocked. Normal traffic is allowed to continue.</p></div>
+                    <div class="detail"><h4>What the firewall does</h4><p>Rejects harmful requests before they reach the system.</p></div>
+                    <div class="detail"><h4>Why it matters</h4><p>This step is what actually protects the application.</p></div>
+                </div></div></div>
+            </div>
+
+            <div class="card flow-box">
+                <button type="button" class="toggle" aria-expanded="false">
+                    <span class="step-num">6</span>
+                    <span class="toggle-text"><h3>Log</h3><p>The event is recorded.</p></span>
+                    <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="panel"><div class="panel-clip"><div class="panel-body">
+                    <div class="detail"><h4>What it is</h4><p>A saved record of the decision.</p></div>
+                    <div class="detail"><h4>How it works</h4><p>The event is stored so it can be reviewed later.</p></div>
+                    <div class="detail"><h4>What the firewall does</h4><p>Keeps a history of what happened.</p></div>
+                    <div class="detail"><h4>Why it matters</h4><p>Logs support investigation and reporting.</p></div>
+                </div></div></div>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- INTERACTIVE FIREWALL -->
+
+    <section class="section">
+
+        <div class="section-heading">
+            <span class="section-number">03</span>
+            <div>
+                <h2>Try the Firewall</h2>
+                <p>Select a request and see how the simulated firewall responds.</p>
+            </div>
+        </div>
+
+        <div class="card simulator-card">
+
+            <div class="simulator-header">
+                <div>
+                    <span class="small-label">LIVE SIMULATION</span>
+                    <h3>Firewall Request Inspector</h3>
+                </div>
+                <div class="shield">🛡</div>
+            </div>
+
+            <p class="simulator-description">
+                This demonstration does not send real attacks.
+                It simply shows the basic decision-making process
+                of a firewall.
+            </p>
+
+            <div class="simulation-buttons">
+
+                <button onclick="checkRequest('normal')" class="allow-button">
+                    Normal Request
+                </button>
+
+                <button onclick="checkRequest('suspicious')" class="block-button">
+                    Suspicious Request
+                </button>
+
+            </div>
+
+            <div id="firewall-result" class="firewall-result">
+                Waiting for a request...
+            </div>
+
+            <ol class="mini-flow" id="sim-flow" aria-label="Firewall pipeline">
+                <li>Request</li>
+                <li>Traffic analysis</li>
+                <li>Rule check</li>
+                <li>Threat detection</li>
+                <li>Allow / Block</li>
+                <li>Log</li>
+            </ol>
+
+        </div>
+
+    </section>
+
+
+    <!-- ATTACK CENTER -->
+
+    <section class="section attack-section">
+
+        <div class="section-heading">
+            <span class="section-number">04</span>
+            <div>
+                <h2>Attack Simulation Center</h2>
+                <p>
+                    Select an attack to learn how it works,
+                    how security rules detect it and why the
+                    simulated firewall blocks it.
+                </p>
+            </div>
+        </div>
+
+        <div class="attack-grid">
+
+            {{ attack_card('sql-injection', 'SQL Injection', 'SQL', 'HIGH',
+                'Learn how malicious database-related input can attempt to manipulate application queries.',
+                'An attack where input fields are used to insert database commands, trying to read or change data that should not be accessible.',
+                'The firewall looks for suspicious command patterns in request data and compares them with a known rule.',
+                'Blocks the request before it reaches the application and records the event.',
+                'Use parameterised queries, validate input and give database accounts only the permissions they need.') }}
+
+            {{ attack_card('brute-force', 'Brute Force', 'BF', 'HIGH',
+                'Learn how repeated authentication requests can be identified by rate-based security rules.',
+                'An attack that tries many username and password combinations until one works.',
+                'The firewall counts repeated login attempts from one source and compares them with a threshold.',
+                'Blocks or rate-limits the source and logs the attempts.',
+                'Use strong passwords, multi-factor authentication, account lockouts and rate limiting.') }}
+
+            {{ attack_card('port-scan', 'Port Scan', 'PS', 'MEDIUM',
+                'Understand how repeated connection attempts across different ports can indicate reconnaissance.',
+                'Reconnaissance that checks many network ports to find which services are listening.',
+                'The firewall notices one source contacting many different ports in a short time.',
+                'Drops the probing traffic so the system reveals less about its services.',
+                'Close unused ports, expose only needed services and monitor for scanning patterns.') }}
+
+            {{ attack_card('xss', 'Cross-Site Scripting', 'XSS', 'HIGH',
+                'Learn how untrusted browser-side content can become a security problem for web applications.',
+                'An attack where script-like content is placed into a page so that it runs in another user browser.',
+                'The firewall inspects request content for script-like patterns and compares them with an XSS rule.',
+                'Blocks the request so the harmful content is never delivered.',
+                'Encode output, validate input and use a Content Security Policy.') }}
+
+            {{ attack_card('ddos', 'DDoS', 'DDoS', 'CRITICAL',
+                'Simulate how abnormal traffic volume can trigger traffic monitoring and mitigation rules.',
+                'A distributed denial-of-service attack floods a service with requests so real users cannot reach it.',
+                'The firewall recognises an abnormal volume of requests from many sources.',
+                'Filters or limits the flood so legitimate traffic can continue.',
+                'Use rate limiting, traffic filtering, load balancing and upstream DDoS protection.') }}
+
+            {{ attack_card('directory-traversal', 'Directory Traversal', 'DT', 'HIGH',
+                'Learn how abnormal file paths can attempt to access files outside an intended directory.',
+                'An attack that manipulates file paths to reach files and folders that should be off limits.',
+                'The firewall checks requested paths for patterns that try to leave the permitted directory.',
+                'Blocks the request so it never touches the file system.',
+                'Validate file paths, restrict file permissions and never build paths directly from user input.') }}
+
+        </div>
+
+    </section>
+
+
+    <!-- ADMIN -->
+
+    <section class="admin-section">
+
+        <div>
+            <span class="small-label">ADMINISTRATION</span>
+            <h2>Security Monitoring Dashboard</h2>
+            <p>
+                Administrators can review simulated attacks,
+                security events and login activity.
+            </p>
+        </div>
+
+        <a href="{{ url_for('login') }}" class="admin-button">
+            Open Admin Panel →
+        </a>
+
+    </section>
+
+</main>
+
+
+<footer>
+    <p>Firewall Lab © 2026</p>
+    <p>Educational Cybersecurity Simulation</p>
+</footer>
+
+
+<script>
+(function () {
+    "use strict";
+
+    /* ---- Expand / collapse for every card ---- */
+    document.querySelectorAll(".toggle, .more").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+            var card = btn.closest(".card");
+            if (!card) { return; }
+            var open = card.classList.toggle("open");
+            card.querySelectorAll(":scope > .toggle, :scope > .more").forEach(function (b) {
+                b.setAttribute("aria-expanded", open ? "true" : "false");
+            });
+        });
+    });
+
+    /* ---- Firewall Request Inspector ---- */
+    var result = document.getElementById("firewall-result");
+    var flow = document.getElementById("sim-flow");
+    var timers = [];
+
+    window.checkRequest = function (type) {
+        var suspicious = (type === "suspicious");
+
+        result.className = "firewall-result " + (suspicious ? "blocked" : "allowed");
+        result.textContent = suspicious
+            ? "🛑 BLOCKED: this suspicious request matched a security rule and was stopped before reaching the protected system."
+            : "✅ ALLOWED: this normal request passed every check and reached the protected system.";
+
+        if (flow) {
+            timers.forEach(clearTimeout);
+            timers = [];
+            flow.className = "mini-flow " + (suspicious ? "blocked" : "allowed");
+            var items = Array.prototype.slice.call(flow.children);
+            items.forEach(function (li) { li.classList.remove("on"); });
+            items.forEach(function (li, i) {
+                timers.push(setTimeout(function () { li.classList.add("on"); }, i * 180));
+            });
+        }
+    };
+})();
+</script>
+
+</body>
+
+</html>

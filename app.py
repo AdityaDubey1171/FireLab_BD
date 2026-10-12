@@ -1,6 +1,7 @@
 from datetime import datetime
 from functools import wraps
 import re
+import os
 
 from flask import (
     Flask,
@@ -25,13 +26,9 @@ from werkzeug.security import (
 
 app = Flask(__name__)
 
-app.config["SECRET_KEY"] = (
-    "firewall-lab-secret-key-change-this"
-)
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
 
-app.config["SQLALCHEMY_DATABASE_URI"] = (
-    "sqlite:///firewall.db"
-)
+
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
